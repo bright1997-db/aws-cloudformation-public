@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: gtuc infrustracture on aws 
+
+#Mappings section 
+Mappings:
+    ec2InstanceTypeMapping:
+        Prod:
+            instnaceType: t2.micro 
+        Dev:
+            instnaceType: t2.small
+        Qa:
+            instnaceType: t2.medium  
+#Parameters serction
+Parameters:
+    ec2InstanceTypeParameters:
+        Type: String 
+        Default: Prod 
+        AllowedValues:
+            - Prod 
+            - Dev
+            - Qa 
+#Condition Sections
+Conditions:
+    whenEc2InstanceTypeParametersEqualsProd: !Equals [!Ref ec2InstanceTypeParameters, Prod]
+    whenEc2InstanceTypeParametersEqualsDev: !Equals [!Ref ec2InstanceTypeParameters, Dev] 
+    whenEc2InstanceTypeParametersNotProd: !Not [{Condition: whenEc2InstanceTypeParametersEqualsProd}]
+#Resources Section
+Resources:
+    ec2InstanceResource:
+        Type: AWS::EC2::Instance 
+        Properties:
+            ImageId: ami-0e38b48473ea57778 
+            KeyName: cnf-key-01 
+            InstanceType: !FindInMap
+                - ec2InstanceTypeMapping
+                - !Ref ec2InstanceTypeParameters
+                - instnaceType
+            SecurityGroups: !If [whenEc2InstanceTypeParametersEqualsProd ,!Ref SSHSecurityGroup]
+    #Security Groups
+    SSHSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Condition: whenEc2InstanceTypeParametersEqualsProd
+        Properties:
+            GroupDescription: Allow ingress trafic on ssh 
+            SecurityGroupIngress:
+                - IpProtocol: tcp 
+                  FromPort: '22'
+                  ToPort: '22'
+                  CidrIp: 0.0.0.0/0
+    HTTPSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        #Condition: whenEc2InstanceTypeParametersEqualsDev
+        Properties:
+            GroupDescription: Allow ingress trafic on http  
+            SecurityGroupIngress:
+                - IpProtocol: tcp 
+                  FromPort: '80'
+                  ToPort: '80'
+                  CidrIp: 0.0.0.0/0
