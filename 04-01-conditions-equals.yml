@@ -11,4 +11,12 @@ Parameters:
             - micro 
             - small 
             - medium 
-            
+#Mappings
+Mappings:
+    ec2InstanceTypeImapping:
+        micro:
+            instanceType: t2.micro 
+        small:
+            instanceType: t2.small 
+        medium:
+            instanceType: t2.medium 
