@@ -23,3 +23,23 @@ Mappings:
 #Conditions 
 Conditions:
     whenEnvironmentEqualsMicro: !Equals [ec2InstanceTypes, micro]
+#Resources
+Resources:
+    #ec2InstanceResources
+    ec2Instance:
+        Type: AWS::EC2::Instance 
+        Properties:
+            ImageId:  ami-0e38b48473ea57778 #Amazon linux image
+            InstanceType: !FindInMap 
+                - ec2InstanceTypeImapping
+                - !Ref ec2InstanceTypes
+                - instanceType
+            KeyName: cnf-key-01
+            SecurityGroup:
+                - default
+    #SecurityGroupResource
+    ec2ElasticIp:
+        Type: AWS::EC2::EIP
+        Condition: whenEnvironmentEqualsMicro 
+        Properties:
+            InstanceId: !Ref ec2Instance
