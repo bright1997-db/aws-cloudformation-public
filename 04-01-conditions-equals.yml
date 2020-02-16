@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Gtuc infrustracture on aws 
+
+#Parameters:
+Parameters:
+    ec2InstanceTypes:
+        Type: String 
+        Description: Select on instance
+        Default: micro 
+        AllowedValues:
+            - micro 
+            - small 
+            - medium 
+            
