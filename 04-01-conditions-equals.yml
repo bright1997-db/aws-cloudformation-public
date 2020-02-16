@@ -19,4 +19,7 @@ Mappings:
         small:
             instanceType: t2.small 
         medium:
-            instanceType: t2.medium 
+            instanceType: t2.medium
+#Conditions 
+Conditions:
+    whenEnvironmentEqualsMicro: !Equals [ec2InstanceTypes, micro]
